@@ -51,19 +51,14 @@
   // Export the Underscore object for **Node.js** and **"CommonJS"**, with
   // backwards-compatibility for the old `require()` API. If we're not in
   // CommonJS, add `_` to the global object via a string identifier for
-  // the Closure Compiler "advanced" mode, and optionally register as an
-  // AMD module via define().
+  // the Closure Compiler "advanced" mode. Registration as an AMD module
+  // via define() happens at the end of this file.
   if (typeof exports !== 'undefined') {
     if (typeof module !== 'undefined' && module.exports) {
       exports = module.exports = _;
     }
     exports._ = _;
   } else {
-    if (typeof define === 'function' && define.amd) {
-      define('underscore', function() {
-        return _;
-      });
-    }
     root['_'] = _;
   }
 
@@ -1001,5 +996,13 @@
   wrapper.prototype.value = function() {
     return this._wrapped;
   };
+
+  // AMD define happens at the end for compatibility with AMD loaders
+  // that don't enforce next-turn semantics on modules.
+  if (typeof define === 'function' && define.amd) {
+    define('underscore', function() {
+      return _;
+    });
+  }
 
 }).call(this);
